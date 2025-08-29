@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Autocorrect System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .hidden-row {
+            display: none; /* Hide rows beyond the 5th */
+        }
+        .about-section {
+            display: none; /* Initially hide the about section */
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .about-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body style="background:#C8A2C8;"> <!-- Lilac color hex code -->
+    <div class="container mt-5">
+        <h1>AutoSuggest and Autocorrect System</h1>
+        <form method="POST" action="/suggest" class="mt-4">
+            <div class="form-group">
+                <label for="keyword">Enter a word:</label>
+                <input type="text" class="form-control" id="keyword" name="keyword" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+
+        <!-- Display the entered word here -->
+        {% if entered_word %}
+        <div class="mt-4">
+            <h4>Entered word is <strong>({{ entered_word }})</strong></h4>
+        </div>
+        {% endif %}
+
+        <!-- About Button -->
+        <button id="about-btn" class="btn btn-secondary about-button">About</button>
+
+        <!-- About Section -->
+        <div id="about-section" class="about-section">
+            <h2>About the Project</h2>
+            <p><strong>Autosuggest and Autocorrect System</strong> is an information retrieval project designed to assist users by providing relevant word suggestions and corrections as they type.</p>
+            <p>Here’s a brief breakdown of its functionality:</p>
+            <ul>
+                <li><strong>Autosuggest Feature:</strong> When a user types a word, the system generates a list of suggested words based on what the user has typed so far. These suggestions are ranked by relevance or similarity to the input, helping users find the correct or intended word quickly.</li>
+                <li><strong>Autocorrect Feature:</strong> If the word entered is incorrect, the system provides corrections based on similarity using algorithms like edit distance, cosine similarity, or other natural language processing (NLP) techniques. A similarity score determines how closely a suggestion matches the entered word.</li>
+                <li><strong>User Interface:</strong> The system displays a list of suggested words along with their similarity scores, enabling users to select a suggestion and correct or complete their input efficiently.</li>
+            </ul>
+            <h3>Use Cases</h3>
+            <ul>
+                <li><strong>Search engines:</strong> Suggest related search terms as users type their query.</li>
+                <li><strong>Text editors or messaging apps:</strong> Autocorrect common misspellings to improve user experience.</li>
+            </ul>
+            <p>This project utilizes techniques from <strong>information retrieval</strong>, <strong>natural language processing (NLP)</strong>, and <strong>machine learning</strong> to enhance the accuracy and relevance of word suggestions and corrections.</p>
+        </div>
+
+        <div id="suggestions" class="mt-4">
+        {% if suggestions %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Suggested Word</th>
+                    <th>Similarity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for suggestion in suggestions %}
+                <tr class="{% if loop.index > 5 %} hidden-row {% endif %}">
+                    <td>{{ suggestion['Word'] }}</td>
+                    <td>{{ suggestion['Similarity'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if suggestions|length > 5 %}
+        <button id="read-more-btn" class="btn btn-primary">Read More</button>
+        {% endif %}
+        {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var readMoreButton = document.getElementById("read-more-btn");
+            var hiddenRows = document.querySelectorAll(".hidden-row");
+            var aboutButton = document.getElementById("about-btn");
+            var aboutSection = document.getElementById("about-section");
+
+            if (readMoreButton) {
+                readMoreButton.addEventListener("click", function() {
+                    // Toggle visibility of hidden rows
+                    hiddenRows.forEach(function(row) {
+                        if (row.style.display === "none" || row.style.display === "") {
+                            row.style.display = "table-row";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+
+                    // Toggle button text
+                    if (readMoreButton.textContent === "Read More") {
+                        readMoreButton.textContent = "Show Less";
+                    } else {
+                        readMoreButton.textContent = "Read More";
+                    }
+                });
+            }
+
+            // Toggle About section visibility
+            aboutButton.addEventListener("click", function() {
+                if (aboutSection.style.display === "none" || aboutSection.style.display === "") {
+                    aboutSection.style.display = "block";
+                    aboutButton.textContent = "Hide About";
+                } else {
+                    aboutSection.style.display = "none";
+                    aboutButton.textContent = "About";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
